@@ -1,0 +1,141 @@
+✅ Answer:
+process.nextTick() queues the callback to be invoked before the next event loop tick. It's the highest priority.
+
+setImmediate() queues the callback to be executed after the current poll phase of the event loop.
+
+setTimeout(fn, 0) schedules the callback after a minimum delay, which can be greater than 0 depending on the system.
+
+📌 Use process.nextTick() with caution — excessive use may block the event loop.
+
+🔹 2. How do you handle CPU-intensive tasks in Node.js?
+✅ Answer:
+Node.js is single-threaded for JavaScript execution, so CPU-bound tasks can block the event loop. Solutions:
+
+Offload to worker threads using worker_threads module.
+
+Use a message queue (e.g., RabbitMQ) to delegate to another service (e.g., in Python or Go).
+
+Cluster module: Spawn multiple Node.js processes to utilize multi-core CPUs.
+
+🔹 3. How would you design a scalable Node.js microservices architecture?
+✅ Answer:
+API Gateway: Central point for routing, auth, and rate-limiting.
+
+Services Communication: REST for simple, gRPC or message broker (Kafka, RabbitMQ) for high-performance.
+
+Service Discovery: Use tools like Consul or Kubernetes.
+
+Database per service: Keep data ownership clear.
+
+Observability: Logging (Winston), Monitoring (Prometheus, Grafana), Tracing (Jaeger, OpenTelemetry).
+
+🔹 4. What are some strategies for improving performance in a Node.js application?
+✅ Answer:
+Avoid blocking the event loop (no heavy computation in main thread).
+
+Use caching (Redis) for frequently accessed data.
+
+Use asynchronous I/O.
+
+Use HTTP/2 where applicable.
+
+Enable compression (gzip, brotli).
+
+Use connection pooling for DBs.
+
+Optimize data serialization/deserialization.
+
+🔹 5. Explain memory leak detection in Node.js and how to mitigate it.
+✅ Answer:
+Detection:
+
+Use --inspect and Chrome DevTools.
+
+Use memory profilers like clinic, heapdump, memwatch-next.
+
+Mitigation:
+
+Avoid global variable leaks.
+
+Remove unused event listeners.
+
+Use WeakMap/WeakSet where appropriate.
+
+Monitor heap usage with process.memoryUsage().
+
+🔹 6. How do you manage configuration and secrets in a Node.js app?
+✅ Answer:
+Use dotenv for local .env management.
+
+For production:
+
+Use AWS Secrets Manager, Azure Key Vault, or Vault.
+
+Load config using Twelve-Factor App methodology.
+
+Avoid hardcoded secrets in the codebase.
+
+🔹 7. Explain the concept of middleware in Express.js and how you'd write a reusable one.
+✅ Answer:
+Middleware is a function with (req, res, next) signature that executes during the request lifecycle.
+
+Example:
+
+js
+Copy
+Edit
+function logRequest(req, res, next) {
+  console.log(`${req.method} ${req.url}`);
+  next();
+}
+app.use(logRequest);
+Reusable middleware should:
+
+Be stateless or use closures.
+
+Use next(err) to handle errors.
+
+🔹 8. How do you handle graceful shutdown in Node.js?
+✅ Answer:
+On SIGINT or SIGTERM, you should:
+
+Stop accepting new connections.
+
+Finish ongoing requests.
+
+Close DB connections.
+
+Clear intervals/timeouts.
+
+Example:
+
+js
+Copy
+Edit
+process.on('SIGTERM', async () => {
+  server.close(() => {
+    db.close();
+    process.exit(0);
+  });
+});
+🔹 9. What are some common security concerns in Node.js and how do you mitigate them?
+✅ Answer:
+SQL/NoSQL Injection → Use ORM/ODM, validate inputs.
+
+XSS/CSRF → Sanitize outputs, use CSRF tokens.
+
+Insecure dependencies → Use npm audit, snyk, dependabot.
+
+Exposed stack traces → Don’t expose internal errors in prod.
+
+Rate-limiting → Prevent DoS attacks with libraries like express-rate-limit.
+
+🔹 10. How do you manage versioning in a Node.js REST API?
+✅ Answer:
+URL versioning: /api/v1/users
+
+Header versioning: Accept: application/vnd.myapp.v1+json
+
+Code separation: Different routers/controllers for each version.
+
+Deprecation handling: Provide headers and warnings before removing versions.
